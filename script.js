@@ -19,11 +19,32 @@ function addMantra() {
 // Remove Mantra Function
 function removeMantra() {
     const selectedMantra = document.getElementById('remove-mantra-select').value;
+
     if (selectedMantra) {
         let mantras = JSON.parse(localStorage.getItem(MANTRAS_KEY)) || [];
+        let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
+
+        // 1. Remove the mantra from the list of mantras
         mantras = mantras.filter(m => m !== selectedMantra);
         localStorage.setItem(MANTRAS_KEY, JSON.stringify(mantras));
+
+        // 2. Remove logs related to the selected mantra for each date
+        for (const date in logs) {
+            logs[date] = logs[date].filter(log => log.mantra !== selectedMantra);
+
+            // If no logs are left for this date, remove the date entry
+            if (logs[date].length === 0) {
+                delete logs[date];
+            }
+        }
+
+        // 3. Save the updated logs after deletion
+        localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+
+        // 4. Reload mantras, logs, and stats to reflect the changes
         loadMantras();
+        loadLogs();
+        updateStats();
     }
 }
 
@@ -51,14 +72,14 @@ function logJapa() {
 function deleteLog() {
     const date = document.getElementById('delete-log-date').value;
     const mantra = document.getElementById('delete-log-mantra').value;
-    
+
     if (date && mantra) {
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
-        
+
         if (logs[date]) {
             // Filter out the specific mantra's log for the date
             logs[date] = logs[date].filter(log => log.mantra !== mantra);
-            
+
             // If there are no more logs for that date, remove the date entry
             if (logs[date].length === 0) {
                 delete logs[date];
@@ -78,11 +99,11 @@ function loadMantras() {
     const removeSelect = document.getElementById('remove-mantra-select');
     const logSelect = document.getElementById('log-mantra-select');
     const deleteSelect = document.getElementById('delete-log-mantra');
-    
+
     removeSelect.innerHTML = '';
     logSelect.innerHTML = '';
     deleteSelect.innerHTML = '';
-    
+
     mantras.forEach(mantra => {
         const option = document.createElement('option');
         option.value = mantra;
@@ -96,22 +117,30 @@ function loadMantras() {
 // Load Logs Function
 function loadLogs() {
     const logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
-    // Display logs in a table or other format
+    const logsTable = document.getElementById('logs-table');
+    logsTable.innerHTML = ''; // Clear the previous table
+
+    for (const date in logs) {
+        logs[date].forEach(entry => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${date}</td><td>${entry.mantra}</td><td>${entry.count}</td>`;
+            logsTable.appendChild(row);
+        });
+    }
 }
 
 // Update Stats Function
 function updateStats() {
     let totalMalas = 0;
     const logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
-    
+
     for (const date in logs) {
         logs[date].forEach(entry => {
             totalMalas += entry.count || 0;
         });
     }
-    
+
     document.getElementById('total-malas').textContent = totalMalas;
-    // Update mantra-specific stats
 }
 
 // Initialize app
