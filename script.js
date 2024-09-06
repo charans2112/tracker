@@ -19,7 +19,7 @@ function addMantra() {
 // Remove Mantra Function
 function removeMantra() {
     const selectedMantra = document.getElementById('remove-mantra-select').value;
-
+    
     if (selectedMantra) {
         let mantras = JSON.parse(localStorage.getItem(MANTRAS_KEY)) || [];
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
@@ -31,7 +31,7 @@ function removeMantra() {
         // 2. Remove logs related to the selected mantra for each date
         for (const date in logs) {
             logs[date] = logs[date].filter(log => log.mantra !== selectedMantra);
-
+            
             // If no logs are left for this date, remove the date entry
             if (logs[date].length === 0) {
                 delete logs[date];
@@ -72,14 +72,14 @@ function logJapa() {
 function deleteLog() {
     const date = document.getElementById('delete-log-date').value;
     const mantra = document.getElementById('delete-log-mantra').value;
-
+    
     if (date && mantra) {
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
-
+        
         if (logs[date]) {
             // Filter out the specific mantra's log for the date
             logs[date] = logs[date].filter(log => log.mantra !== mantra);
-
+            
             // If there are no more logs for that date, remove the date entry
             if (logs[date].length === 0) {
                 delete logs[date];
@@ -99,7 +99,7 @@ function loadMantras() {
     const removeSelect = document.getElementById('remove-mantra-select');
     const logSelect = document.getElementById('log-mantra-select');
     const deleteSelect = document.getElementById('delete-log-mantra');
-
+    
     removeSelect.innerHTML = '';
     logSelect.innerHTML = '';
     deleteSelect.innerHTML = '';
@@ -118,7 +118,7 @@ function loadMantras() {
 function loadLogs() {
     const logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
     const logsTable = document.getElementById('logs-table');
-    logsTable.innerHTML = ''; // Clear the previous table
+    logsTable.innerHTML = '';  // Clear previous logs
 
     for (const date in logs) {
         logs[date].forEach(entry => {
@@ -143,7 +143,7 @@ function updateStats() {
     document.getElementById('total-malas').textContent = totalMalas;
 }
 
-// Initialize app
+// Initialize the app
 function initializeApp() {
     loadMantras();
     loadLogs();
