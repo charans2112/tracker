@@ -47,16 +47,28 @@ function logJapa() {
     }
 }
 
-// Delete Log Function
+// Delete Log by Mantra Function
 function deleteLog() {
     const date = document.getElementById('delete-log-date').value;
-    if (date) {
+    const mantra = document.getElementById('delete-log-mantra').value;
+    
+    if (date && mantra) {
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
-        delete logs[date];
-        localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
-        document.getElementById('delete-log-date').value = '';
-        loadLogs();
-        updateStats();
+        
+        if (logs[date]) {
+            // Filter out the specific mantra's log for the date
+            logs[date] = logs[date].filter(log => log.mantra !== mantra);
+            
+            // If there are no more logs for that date, remove the date entry
+            if (logs[date].length === 0) {
+                delete logs[date];
+            }
+
+            localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+            document.getElementById('delete-log-date').value = '';
+            loadLogs();
+            updateStats();
+        }
     }
 }
 
@@ -65,31 +77,39 @@ function loadMantras() {
     const mantras = JSON.parse(localStorage.getItem(MANTRAS_KEY)) || [];
     const removeSelect = document.getElementById('remove-mantra-select');
     const logSelect = document.getElementById('log-mantra-select');
+    const deleteSelect = document.getElementById('delete-log-mantra');
+    
     removeSelect.innerHTML = '';
     logSelect.innerHTML = '';
+    deleteSelect.innerHTML = '';
+    
     mantras.forEach(mantra => {
         const option = document.createElement('option');
         option.value = mantra;
         option.textContent = mantra;
         removeSelect.appendChild(option);
         logSelect.appendChild(option);
+        deleteSelect.appendChild(option);
     });
 }
 
 // Load Logs Function
 function loadLogs() {
-    // Optionally, you can update UI with log data
+    const logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
+    // Display logs in a table or other format
 }
 
 // Update Stats Function
 function updateStats() {
     let totalMalas = 0;
     const logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
+    
     for (const date in logs) {
         logs[date].forEach(entry => {
             totalMalas += entry.count || 0;
         });
     }
+    
     document.getElementById('total-malas').textContent = totalMalas;
     // Update mantra-specific stats
 }
