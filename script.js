@@ -12,6 +12,8 @@ function addMantra() {
             localStorage.setItem(MANTRAS_KEY, JSON.stringify(mantras));
             document.getElementById('mantra-input').value = '';
             loadMantras();
+        } else {
+            alert('Mantra already exists.');
         }
     }
 }
@@ -24,11 +26,11 @@ function removeMantra() {
         let mantras = JSON.parse(localStorage.getItem(MANTRAS_KEY)) || [];
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
 
-        // 1. Remove the mantra from the list of mantras
+        // Remove the mantra from the list of mantras
         mantras = mantras.filter(m => m !== selectedMantra);
         localStorage.setItem(MANTRAS_KEY, JSON.stringify(mantras));
 
-        // 2. Remove logs related to the selected mantra for each date
+        // Remove logs related to the selected mantra for each date
         for (const date in logs) {
             logs[date] = logs[date].filter(log => log.mantra !== selectedMantra);
             
@@ -38,13 +40,15 @@ function removeMantra() {
             }
         }
 
-        // 3. Save the updated logs after deletion
+        // Save the updated logs after deletion
         localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
 
-        // 4. Reload mantras, logs, and stats to reflect the changes
+        // Reload mantras, logs, and stats to reflect the changes
         loadMantras();
         loadLogs();
         updateStats();
+    } else {
+        alert('Please select a mantra to remove.');
     }
 }
 
@@ -54,7 +58,7 @@ function logJapa() {
     const count = parseInt(document.getElementById('log-count').value, 10);
     const mantra = document.getElementById('log-mantra-select').value;
 
-    if (date && count && mantra) {
+    if (date && count > 0 && mantra) {
         let logs = JSON.parse(localStorage.getItem(LOGS_KEY)) || {};
         if (!logs[date]) {
             logs[date] = [];
@@ -65,6 +69,8 @@ function logJapa() {
         document.getElementById('log-count').value = '';
         loadLogs();
         updateStats();
+    } else {
+        alert('Please fill out all fields for logging.');
     }
 }
 
@@ -89,7 +95,11 @@ function deleteLog() {
             document.getElementById('delete-log-date').value = '';
             loadLogs();
             updateStats();
+        } else {
+            alert('No logs found for the selected date.');
         }
+    } else {
+        alert('Please fill out both the date and mantra fields.');
     }
 }
 
@@ -104,14 +114,22 @@ function loadMantras() {
     logSelect.innerHTML = '';
     deleteSelect.innerHTML = '';
 
-    mantras.forEach(mantra => {
-        const option = document.createElement('option');
-        option.value = mantra;
-        option.textContent = mantra;
-        removeSelect.appendChild(option);
-        logSelect.appendChild(option);
-        deleteSelect.appendChild(option);
-    });
+    if (mantras.length > 0) {
+        mantras.forEach(mantra => {
+            const option = document.createElement('option');
+            option.value = mantra;
+            option.textContent = mantra;
+            removeSelect.appendChild(option);
+            logSelect.appendChild(option);
+            deleteSelect.appendChild(option);
+        });
+    } else {
+        const placeholder = document.createElement('option');
+        placeholder.textContent = 'No mantras available';
+        removeSelect.appendChild(placeholder);
+        logSelect.appendChild(placeholder);
+        deleteSelect.appendChild(placeholder);
+    }
 }
 
 // Load Logs Function
@@ -150,4 +168,5 @@ function initializeApp() {
     updateStats();
 }
 
+// Call initialization when the page loads
 initializeApp();
