@@ -12,12 +12,14 @@
     </div>
 
     <div id="app" class="container">
+        <!-- Add Mantra Section -->
         <div id="add-mantra-section" class="section">
             <h2>Add Mantra</h2>
             <input type="text" id="mantra-input" placeholder="Enter mantra">
             <button class="btn add" onclick="addMantra()">Add Mantra</button>
         </div>
 
+        <!-- Remove Mantra Section -->
         <div id="remove-mantra-section" class="section">
             <h2>Remove Mantra</h2>
             <select id="remove-mantra-select">
@@ -26,6 +28,7 @@
             <button class="btn remove" onclick="removeMantra()">Remove Mantra</button>
         </div>
 
+        <!-- Log Japa Malas Section -->
         <div id="log-section" class="section">
             <h2>Log Japa Malas</h2>
             <input type="date" id="log-date">
@@ -36,6 +39,7 @@
             <button class="btn add" onclick="logJapa()">Log Japa Mala</button>
         </div>
 
+        <!-- Delete Log Section -->
         <div id="delete-log-section" class="section">
             <h2>Delete Log Entry</h2>
             <input type="date" id="delete-log-date">
@@ -45,12 +49,27 @@
             <button class="btn remove" onclick="deleteLog()">Delete Log</button>
         </div>
 
+        <!-- Stats Section -->
         <div id="stats-section" class="section">
-            <h2>Stats</h2>
+            <h2>Total Stats</h2>
             <p>Total Malas: <span id="total-malas">0</span></p>
-            <div id="mantra-stats">
-                <!-- Mantra-specific stats will be displayed here -->
-            </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div id="logs-section" class="section">
+            <h2>Japa Mala Logs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Mantra</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody id="logs-table">
+                    <!-- Logs will be populated dynamically -->
+                </tbody>
+            </table>
         </div>
     </div>
 
